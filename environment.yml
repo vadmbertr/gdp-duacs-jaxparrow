@@ -1,0 +1,6 @@
+name: gdp6h_duacs_jaxparrow
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
