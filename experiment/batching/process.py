@@ -97,8 +97,8 @@ def estimate_and_evaluate(
     duacs_xr = duacs_ds.dataset
 
     # fix over batches
-    lat_t = jnp.ones((duacs_xr.latitude.n_locations, duacs_xr.longitude.n_locations)) * duacs_xr.latitude.data.reshape(-1, 1)
-    lon_t = jnp.ones((duacs_xr.latitude.n_locations, duacs_xr.longitude.n_locations)) * duacs_xr.longitude.data
+    lat_t = jnp.ones((duacs_xr.latitude.size, duacs_xr.longitude.size)) * duacs_xr.latitude.data.reshape(-1, 1)
+    lon_t = jnp.ones((duacs_xr.latitude.size, duacs_xr.longitude.size)) * duacs_xr.longitude.data
 
     # estimate batch indices based on domain dimensions
     n_time, n_lat, n_lon = tuple(duacs_xr.sizes.values())

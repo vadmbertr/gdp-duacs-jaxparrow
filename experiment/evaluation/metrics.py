@@ -56,7 +56,7 @@ def compute_binned_metrics(
     count_expression = ([f"isfinite(err_u_{method})" for method in methods] +
                         [f"isfinite(err_v_{method})" for method in methods] +
                         [f"isfinite(err_{method})" for method in methods])
-    domain_shape = [duacs_ds.latitude.n_locations, duacs_ds.longitude.n_locations]
+    domain_shape = [duacs_ds.latitude.size, duacs_ds.longitude.size]
 
     # convert to dataframe
     traj_metrics = traj_metrics.to_dataframe().reset_index().drop("obs", axis=1)
