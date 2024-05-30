@@ -83,7 +83,6 @@ def mediterranean_masking(ds: xr.Dataset) -> xr.Dataset:
 
         return mask
 
-    # 2nd pass over the observation dimension
     ds.lon.load()
     ds.lat.load()
     ds = cd.ragged.subset(ds, {("lon", "lat"): compute_mask})
