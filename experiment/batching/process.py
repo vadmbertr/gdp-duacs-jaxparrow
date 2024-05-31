@@ -201,7 +201,11 @@ def process_batch(
     LOGGER.info("2.2. Interpolating SSC velocities to drifters positions")
     time = duacs_ds.time[idx0:idx1].data
     gdp6h_ds.time.load()
-    gdp6h_batch = cd.ragged.subset(gdp6h_ds, {"time": (time[0], time[-1])}).drop_vars(["rowsize", "id"])
+    gdp6h_batch = cd.ragged.subset(
+        gdp6h_ds,
+        {"time": (time[0], time[-1])},
+        row_dim_name="traj"
+    ).drop_vars(["rowsize", "id"])
     gdp6h_batch = interpolate_drifters_location(gdp6h_batch, time, lat_v, lon_u, uv_fields)
 
     LOGGER.info("2.3. Evaluating SSC against drifters velocities")

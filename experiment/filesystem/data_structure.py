@@ -8,12 +8,10 @@ class DataStructure:
     def __init__(
             self,
             data_path: str = "data",
-            gdp6h_zarr_dir: str = "data.zarr",
             root_path: str = "experiments",
             filesystem: S3FileSystem = None
     ):
         self.data_path = data_path
-        self.gdp6h_zarr_dir = gdp6h_zarr_dir
         self.root_path = os.path.join(root_path, "gdp6h_duacs_jaxparrow")
         self.filesystem = filesystem
 

@@ -66,7 +66,6 @@ def experiment(
         os.path.basename(hydra_output_dir)
     )  # reconstruct hydra experiment path structure
     # 0.1. experiment data (zarr input & output)
-    gdp6h_zstore = ZarrStore(data_structure.data_path, data_structure.gdp6h_zarr_dir, data_structure.filesystem)
     scc_fields_zstore = ZarrStore(experiment_path, "ssc_fields.zarr", data_structure.filesystem)
     # 0.2. copy experiment config
     try:
@@ -76,7 +75,7 @@ def experiment(
 
     LOGGER.info("1. Loading input datasets")
     LOGGER.info("1.1.1. Loading GDP6H")
-    gdp6h_ds.load_data(gdp6h_zstore)
+    gdp6h_ds.load_data()
     LOGGER.info("1.1.2. Preprocessing GDP6H")
     LOGGER.debug(
         f"before preprocessing: "
