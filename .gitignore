@@ -8,7 +8,9 @@
 **/data/*
 **/run/*
 **/viz/*
-**/plot/*.svg
+**/plot/*
+**/experiments/*
+**/outputs/*
 
 # IDE related
 .idea
