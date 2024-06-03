@@ -1,6 +1,8 @@
 from collections.abc import Callable
+import io
 
 import clouddrift as cd
+import numpy as np
 import xarray as xr
 
 from ..filesystem.zarr_store import ZarrStore
@@ -16,8 +18,30 @@ class GDP6hDs:
         self.filter_fn = lambda x: x
         self.name = "global"
 
-    def load_data(self):
-        ds = cd.datasets.gdp6h()
+    def load_data(self, store: ZarrStore):
+        def sanitize_date(arr: xr.DataArray) -> xr.DataArray:
+            nat_index = arr < 0
+            arr[nat_index.compute()] = np.nan
+            return arr
+
+        # the GDP6H inputs from clouddrift can not be opened "remotely", so we store it (for now)
+        # (see https://github.com/Cloud-Drift/clouddrift/issues/363)
+        if not store.exists():  # download inputs: takes time
+            # from cd.datasets.gdp6h
+            buffer = io.BytesIO()
+            cd.adapters.utils.download_with_progress([(f"{self.gdp6h_url}#mode=bytes", buffer, None)])
+            reader = io.BufferedReader(buffer)
+            ds = xr.open_dataset(reader)
+            ds = ds.rename_vars({"ID": "id"}).assign_coords({"id": ds.ID}).drop_vars(["ids"])
+            ds.to_zarr(store.store, mode="w")
+
+        ds = xr.open_zarr(store.store, decode_times=False)
+        ds["deploy_date"] = sanitize_date(ds.deploy_date)
+        ds["end_date"] = sanitize_date(ds.end_date)
+        ds["drogue_lost_date"] = sanitize_date(ds.drogue_lost_date)
+        ds["time"] = sanitize_date(ds.time)
+        ds = xr.decode_cf(ds)
+
         ds = self.filter_fn(ds)
 
         self.dataset = ds
@@ -59,6 +83,8 @@ def mediterranean_masking(ds: xr.Dataset) -> xr.Dataset:
 
         return mask
 
+    ds.lon.load()
+    ds.lat.load()
     ds = cd.ragged.subset(ds, {("lon", "lat"): compute_mask}, row_dim_name="traj")
 
     return ds
